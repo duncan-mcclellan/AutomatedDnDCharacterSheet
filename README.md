@@ -1,5 +1,5 @@
 # Automated D&D Character Sheet
-A program that will generate as much of a character sheet as possible with minimal input from the user. The purpose is narrow the gap of entry for new D&amp;D players
+A program that will generate as much of a character sheet as possible with minimal input from the user. The purpose is narrow the gap of entry for new D&amp;D players.
 
 Feel free to use this program however you please.
 
