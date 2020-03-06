@@ -2,661 +2,189 @@
  * Created: 01/13/2020
  * Tested: Untested
  * Version: 0.1.1
- * Updated: 02/10/2020
+ * Updated: 03/06/2020
  *
  * Desc: 
- * A D&D 5e character sheet that fills your stats, proficiencies, etc. to allow a character to be rolled with minimal effort.
+ * A D&D 5e character sheet that fills your stats, proficiencies, etc. to allow a character to be created with minimal effort.
  * This should lower the barrier of entry for new players.
  * Not recommended for experienced players that wish to trail off the beaten path.
  * 
  * Changelog:
  * 0.1.0: Auto rolls stats, organizes stats for class, sets save roll stats, sets armor and weapon proficiencies, sets hit die, boosts stats based on race, sets starting health.
  * 0.1.1: Saves are displayed as the stat name rather than their array location. Languages are assigned and extra languages can be choosen when appropriate.
- * 
+ * 0.2.0: Refactored code.
+ *
+ * Known Issues:
+ * Proficiency assignment doesn't work for Bard due to instrument selection not working yet.
+ * Proficiency assignment doesn't work for Monk due to not allowing selection between artisan tool or instrument and the selections that will come after.
  */
 
-//Includes
+//Included Libraries
 #include <iostream>
 #include <stdlib.h>
 #include <ctime>
-#include <algorithm>
 #include <vector>
-
-#define D6 6
-
-//Prototypes
-int* fillStats();
 
 using namespace std;
 
-//Global variables used for clarity
-enum order {str, dex, con, intel, wis, cha};
-string stat[] = {"str", "dex", "con", "intel", "wis", "cha"};
+//Included Headers
+#include "main.h"
+#include "_player.h"
+#include "toString.h"
+#include "heapSort.h"
 
-template <typename T>
-void vToString(vector<T> vec){
-  cout << "[";
-  for(int i = 0; i < vec.size(); i++){
-    cout << vec.at(i);
-    if(i != vec.size() - 1){
-      cout << ", ";
-    }
-  }
-  cout << "]" << endl << endl;
-}
-
-void toString(int* arr){
-  cout << "[";
-  for(int i = 0; i < 6; i++){
-    cout << *(arr + i);
-    if(i != 5){
-      cout << ", ";
-    }
-  }
-  cout << "]" << endl << endl;
-}
-
-/* Takes user input for class and stats
- * Sorts the stats based on class
+/* Takes cClass string and reference to playerClass
+ * Sets playerClass to cClass
  */
-void sortStats(string Cclass, int* stats){
-  int sorted[6];
-  string subclass;
-
-  if(Cclass == "Barbarian"){
-    sorted[str] = *(stats + 5);
-    sorted[con] = *(stats + 4);
-    sorted[dex] = *(stats + 3);
-    sorted[wis] = *(stats + 2);
-    sorted[cha] = *(stats + 1);
-    sorted[intel] = *stats;
-  }else if(Cclass == "Bard"){
-    sorted[cha] = *(stats + 5);
-    sorted[dex] = *(stats + 4);
-    sorted[con] = *(stats + 3);
-    sorted[wis] = *(stats + 2);
-    sorted[str] = *(stats + 1);
-    sorted[intel] = *stats;
-  }else if(Cclass == "Cleric"){
-    sorted[wis] = *(stats + 5);
-    sorted[str] = *(stats + 4);
-    sorted[con] = *(stats + 3);
-    sorted[cha] = *(stats + 2);
-    sorted[dex] = *(stats + 1);
-    sorted[intel] = *stats;
-  }else if(Cclass == "Druid"){
-    sorted[wis] = *(stats + 5);
-    sorted[dex] = *(stats + 4);
-    sorted[con] = *(stats + 3);
-    sorted[cha] = *(stats + 2);
-    sorted[intel] = *(stats + 1);
-    sorted[str] = *stats;
-  }else if(Cclass == "Fighter"){
-    sorted[str] = *(stats + 5);
-    sorted[con] = *(stats + 4);
-    sorted[dex] = *(stats + 3);
-    sorted[cha] = *(stats + 2);
-    sorted[wis] = *(stats + 1);
-    sorted[intel] = *stats;
-  }else if(Cclass == "Monk"){
-    sorted[dex] = *(stats + 5);
-    sorted[wis] = *(stats + 4);
-    sorted[con] = *(stats + 3);
-    sorted[cha] = *(stats + 2);
-    sorted[intel] = *(stats + 1);
-    sorted[str] = *stats;
-  }else if(Cclass == "Paladin"){
-    sorted[str] = *(stats + 5);
-    sorted[con] = *(stats + 4);
-    sorted[cha] = *(stats + 3);
-    sorted[dex] = *(stats + 2);
-    sorted[wis] = *(stats + 1);
-    sorted[intel] = *stats;
-  }else if(Cclass == "Ranger"){
-    sorted[dex] = *(stats + 5);
-    sorted[wis] = *(stats + 4);
-    sorted[con] = *(stats + 3);
-    sorted[cha] = *(stats + 2);
-    sorted[intel] = *(stats + 1);
-    sorted[str] = *stats;
-  }else if(Cclass == "Rogue"){
-    cout << "Subclass: ";
-    cin >> subclass;
-    if(subclass == "Thief"){
-      sorted[dex] = *(stats + 5);
-      sorted[cha] = *(stats + 4);
-      sorted[str] = *(stats + 3);
-      sorted[con] = *(stats + 2);
-      sorted[wis] = *(stats + 1);
-      sorted[intel] = *stats;
-    }else if(subclass == "Assassin"){
-      sorted[dex] = *(stats + 5);
-      sorted[cha] = *(stats + 4);
-      sorted[wis] = *(stats + 3);
-      sorted[con] = *(stats + 2);
-      sorted[str] = *(stats + 1);
-      sorted[intel] = *stats;
-    }else if(subclass == "Arcane"){
-      sorted[dex] = *(stats + 5);
-      sorted[intel] = *(stats + 4);
-      sorted[con] = *(stats + 3);
-      sorted[cha] = *(stats + 2);
-      sorted[wis] = *(stats + 1);
-      sorted[str] = *stats;
-    }
-  }else if(Cclass == "Sorcerer"){
-    sorted[con] = *(stats + 5);
-    sorted[dex] = *(stats + 4);
-    sorted[con] = *(stats + 3);
-    sorted[wis] = *(stats + 2);
-    sorted[intel] = *(stats + 1);
-    sorted[str] = *stats;
-  }else if(Cclass == "Warlock"){
-    sorted[cha] = *(stats + 5);
-    sorted[con] = *(stats + 4);
-    sorted[dex] = *(stats + 3);
-    sorted[wis] = *(stats + 2);
-    sorted[str] = *(stats + 1);
-    sorted[intel] = *stats;
-  }else if(Cclass == "Wizard"){
-    sorted[intel] = *(stats + 5);
-    sorted[con] = *(stats + 4);
-    sorted[dex] = *(stats + 3);
-    sorted[wis] = *(stats + 2);
-    sorted[cha] = *(stats + 1);
-    sorted[str] = *stats;
+void setClass(string cClass, _class*& playerClass){
+  if(cClass == "Barbarian"){
+    playerClass = new Barbarian();
+  }else if(cClass == "Bard"){
+    playerClass = new Bard();
+  }else if(cClass == "Cleric"){
+    playerClass = new Cleric();
+  }else if(cClass == "Druid"){
+    playerClass = new Druid();
+  }else if(cClass == "Fighter"){
+    playerClass = new Fighter();
+  }else if(cClass == "Monk"){
+    playerClass = new Monk();
+  }else if(cClass == "Paladin"){
+    playerClass = new Paladin();
+  }else if(cClass == "Ranger"){
+    playerClass = new Ranger();
+  }else if(cClass == "Rogue"){
+    playerClass = new Rogue();
+  }else if(cClass == "Sorcerer"){
+    playerClass = new Sorcerer();
+  }else if(cClass == "Warlock"){
+    playerClass = new Warlock();
+  }else if(cClass == "Wizard"){
+    playerClass = new Wizard();
   }else{
-    cout << "Not a valid class option" << endl;
-  }
-
-  for(int i = 0; i < 6; i++){
-    *(stats + i) = sorted[i];
+    cout << "Invalid class option made" << endl;
   }
 }
 
-/* Takes stats and user input for race
- * Buffs stats based on race
+/* Takes race string and reference to playerRace
+ * Sets playerRace to race
  */
-void buffStats(string race, int* stats){
-  string st1, st2;
-
+void setRace(string race, _race*& playerRace){
   if(race == "Dragonborn"){
-    *(stats + str) += 2;
-    *(stats + cha) += 1;
+    playerRace = new Dragonborn();
   }else if(race == "Dwarf"){
-    *(stats + con) += 2;
+    playerRace = new Dwarf();
   }else if(race == "Elf"){
-    *(stats + dex) += 2;
+    playerRace = new Elf();
   }else if(race == "Gnome"){
-    *(stats + intel) += 2;
+    playerRace = new Gnome();
   }else if(race == "Half-Elf"){
-    *(stats + cha) += 2;
-
-    for(int i = 0; i < 5; i++){
-      cout << stat[i];
-      if(i != 4){
-        cout << ", ";
-      }else{
-        cout << ": ";
-      }
-    }
-
-    cin >> st1;
-
-    for(int i = 0; i < 5; i++){
-      if(stat[i] != st1){
-        cout << stat[i];
-        
-        if(i != 4){
-          cout << ", ";
-        }else{
-          cout << ": ";
-        }
-      }
-    }
-
-    cin >> st2;
-
-    if(st1 == "str" || st2 == "str"){
-      *(stats + str) += 1;
-    }
-    if(st1 == "con" || st2 == "con"){
-      *(stats + con) += 1;
-    }
-    if(st1 == "intel" || st2 == "intel"){
-      *(stats + intel) += 1;
-    }
-    if(st1 == "wis" || st2 == "wis"){
-      *(stats + wis) += 1;
-    }
-    if(st1 == "dex" || st2 == "dex"){
-      *(stats + dex) += 1;
-    }
+    playerRace = new HalfElf();
   }else if(race == "Halfling"){
-    *(stats + dex) += 2;
+    playerRace = new Halfling();
   }else if(race == "Half-Orc"){
-    *(stats + str) += 2;
-    *(stats + con) += 1;
+    playerRace = new HalfOrc();
   }else if(race == "Human"){
-    *(stats + str) += 1;
-    *(stats + dex) += 1;
-    *(stats + con) += 1;
-    *(stats + intel) += 1;
-    *(stats + wis) += 1;
-    *(stats + cha) += 1;
+    playerRace = new Human();
   }else if(race == "Tiefling"){
-    *(stats + cha) += 2;
-    *(stats + intel) += 1;
+    playerRace = new Tiefling();
+  }else{
+    cout << "Invalid race option made" << endl;
   }
 }
 
-/* Takes traits vector and user input for race
- * Adds traits to the vector based on race
+/* Takes background string and reference to playerBackground
+ * Sets playerBackground to background
  */
-void addRacialTraits(string race, vector<string> *traits){
-  if(race == "Dragonborn"){
-    (*traits).push_back("Draconic Ancestry");
-    (*traits).push_back("Breath Weapon");
-    (*traits).push_back("Damage Resistance");
-  }else if(race == "Dwarf"){
-    (*traits).push_back("Darkvision");
-    (*traits).push_back("Dwarven Resilience");
-    (*traits).push_back("Dwarven Combat Training");
-    (*traits).push_back("Stonecunning");
-  }else if(race == "Elf"){
-    (*traits).push_back("Darkvision");
-    (*traits).push_back("Keen Senses");
-    (*traits).push_back("Fey Ancestry");
-    (*traits).push_back("Trance");    
-  }else if(race == "Gnome"){
-    (*traits).push_back("Darkvision");
-    (*traits).push_back("Gnome Cunning");    
-  }else if(race == "Half-Elf"){
-    (*traits).push_back("Darkvision");
-    (*traits).push_back("Fey Ancestry");
-    (*traits).push_back("Skill Versatility");
-  }else if(race == "Halfling"){
-    (*traits).push_back("Lucky");
-    (*traits).push_back("Brave");
-    (*traits).push_back("Halfling");
-    (*traits).push_back("Nimbleness");    
-  }else if(race == "Half-Orc"){
-    (*traits).push_back("Darkvision");
-    (*traits).push_back("Menacing");
-    (*traits).push_back("Relentless Endurance");
-    (*traits).push_back("Savage Attacks");    
-  }else if(race == "Human"){
-    (*traits).push_back("Extra Language");    
-  }else if(race == "Tiefling"){
-    (*traits).push_back("Darkvision");
-    (*traits).push_back("Hellish Resistance");
-    (*traits).push_back("Infernal Legacy");
+void setBackground(string background, _background*& playerBackground){
+  if(background == "Acolyte"){
+    playerBackground = new Acolyte();
+  }else if(background == "Criminal"){
+    playerBackground = new Criminal();
+  }else if(background == "Folk_Hero"){
+    playerBackground = new FolkHero();
+  }else if(background == "Haunted_One"){
+    playerBackground = new HauntedOne();
+  }else if(background == "Noble"){
+    playerBackground = new Noble();
+  }else if(background == "Sage"){
+    playerBackground = new Sage();
+  }else if(background == "Soldier"){
+    playerBackground = new Soldier();
+  }else{
+    cout << "Invalid background option made" << endl;
   }
 }
 
-/* Takes saves vector and user input for class
- * Assigns saves based on class
+/* Used to test the player class
+ * Takes no input and returns nothing
+ * Outputs results of functions to console
  */
-void addSaves(string Cclass, vector<string> *saves){
-  if(Cclass == "Barbarian"){
-    (*saves).push_back(stat[str]);
-    (*saves).push_back(stat[con]);
-  }else if(Cclass == "Bard"){
-    (*saves).push_back(stat[dex]);
-    (*saves).push_back(stat[cha]);
-  }else if(Cclass == "Cleric"){
-    (*saves).push_back(stat[wis]);
-    (*saves).push_back(stat[cha]);
-  }else if(Cclass == "Druid"){
-    (*saves).push_back(stat[intel]);
-    (*saves).push_back(stat[wis]);
-  }else if(Cclass == "Fighter"){
-    (*saves).push_back(stat[str]);
-    (*saves).push_back(stat[con]);
-  }else if(Cclass == "Monk"){
-    (*saves).push_back(stat[str]);
-    (*saves).push_back(stat[dex]);
-  }else if(Cclass == "Paladin"){
-    (*saves).push_back(stat[wis]);
-    (*saves).push_back(stat[cha]);
-  }else if(Cclass == "Ranger"){
-    (*saves).push_back(stat[str]);
-    (*saves).push_back(stat[dex]);
-  }else if(Cclass == "Rogue"){
-    (*saves).push_back(stat[dex]);
-    (*saves).push_back(stat[intel]);
-  }else if(Cclass == "Sorcerer"){
-    (*saves).push_back(stat[con]);
-    (*saves).push_back(stat[cha]);
-  }else if(Cclass == "Warlock"){
-    (*saves).push_back(stat[wis]);
-    (*saves).push_back(stat[cha]);
-  }else if(Cclass == "Wizard"){
-    (*saves).push_back(stat[intel]);
-    (*saves).push_back(stat[wis]);
-  }
-}
-
-/* Takes user input for class
- * Assigns hit die for class
- */
-int addHitDie(string Cclass){
-  if(Cclass == "Barbarian"){
-    return 12;
-  }else if(Cclass == "Fighter" || Cclass == "Paladin" ||Cclass == "Ranger"){
-    return 10;
-  }else if(Cclass == "Bard" || Cclass == "Cleric" || Cclass == "Druid" || Cclass == "Monk" || Cclass == "Rogue" || Cclass == "Warlock"){
-    return 8;
-  }else if(Cclass == "Sorcerer" || Cclass == "Wizard"){
-    return 6;
-  }
-
-  return -1;
-}
-
-/* Takes armorPro vector, weaponProf vector, toolProf vector and user input for class
- * Adds proficiencies based on class
- */
-void classProfs(string Cclass, vector<string> *armorProf, vector<string> *weaponProf, vector<string> *toolProf){
-  string tool;
-  string instruments[] = {};
-
-  if(Cclass == "Barbarian"){
-    (*armorProf).push_back("Light");
-    (*armorProf).push_back("Medium");
-    (*armorProf).push_back("Shields");
-    (*weaponProf).push_back("Simple");
-    (*weaponProf).push_back("Martial");
-  }else if(Cclass == "Bard"){
-    (*armorProf).push_back("Light");
-    (*weaponProf).push_back("Simple");
-    (*weaponProf).push_back("Hand crossbows");
-    (*weaponProf).push_back("Longswords");
-    (*weaponProf).push_back("Rapiers");
-    (*weaponProf).push_back("Shortswords");
-    for(int i = 0; i < 3; i++){
-
-      cout << "[]: ";
-      cin >> tool;
-
-      (*toolProf).push_back(tool);
-    }
-  }else if(Cclass == "Cleric"){
-    (*armorProf).push_back("Light");
-    (*armorProf).push_back("Medium");
-    (*armorProf).push_back("Shields");
-    (*weaponProf).push_back("Simple");    
-  }else if(Cclass == "Druid"){
-    (*armorProf).push_back("Light");
-    (*armorProf).push_back("Medium (Nonmetal");
-    (*armorProf).push_back("Shields (Nonmetal)");
-    (*weaponProf).push_back("Clubs");
-    (*weaponProf).push_back("Daggers");
-    (*weaponProf).push_back("Darts");
-    (*weaponProf).push_back("Javelins");
-    (*weaponProf).push_back("Maces");
-    (*weaponProf).push_back("Quarterstaffs");
-    (*weaponProf).push_back("Scimitars");
-    (*weaponProf).push_back("Sickles");
-    (*weaponProf).push_back("Slings");
-    (*weaponProf).push_back("Spears");
-    (*toolProf).push_back("Herbalism Kit");
-  }else if(Cclass == "Fighter"){
-    (*armorProf).push_back("Light");
-    (*armorProf).push_back("Medium");
-    (*armorProf).push_back("Heavy");
-    (*weaponProf).push_back("Simple");
-    (*weaponProf).push_back("Martial");    
-  }else if(Cclass == "Monk"){
-    (*weaponProf).push_back("Simple"); 
-    (*weaponProf).push_back("Shortswords");
-
-    for(int i = 0; i < 5; i++)
-      cout << "artisan or instrument";
-    (*toolProf).push_back(tool);
-  }else if(Cclass == "Paladin"){
-    (*armorProf).push_back("Light");
-    (*armorProf).push_back("Medium");
-    (*armorProf).push_back("Heavy");
-    (*armorProf).push_back("Shields");
-    (*weaponProf).push_back("Simple");
-    (*weaponProf).push_back("Martial");
-  }else if(Cclass == "Ranger"){
-    (*armorProf).push_back("Light");
-    (*armorProf).push_back("Medium");
-    (*armorProf).push_back("Shields");
-    (*weaponProf).push_back("Simple");
-    (*weaponProf).push_back("Martial");
-  }else if(Cclass == "Rogue"){
-    (*armorProf).push_back("Light");
-    (*weaponProf).push_back("Simple");
-    (*weaponProf).push_back("Hand crossbows");
-    (*weaponProf).push_back("Longswords");
-    (*weaponProf).push_back("Rapiers");
-    (*weaponProf).push_back("Shortswords");
-    (*toolProf).push_back("Thieves' Tools");
-  }else if(Cclass == "Sorcerer" || Cclass == "Wizard"){
-    (*weaponProf).push_back("Daggers");
-    (*weaponProf).push_back("Darts");
-    (*weaponProf).push_back("Slings");
-    (*weaponProf).push_back("Quarterstaffs");
-    (*weaponProf).push_back("Light crossbows");
-  }else if(Cclass == "Warlock"){
-    (*armorProf).push_back("Light");
-    (*weaponProf).push_back("Simple");
-  }
-}
-
-/* Takes equipment vector and user input for class
- * Displays list of typical starting items for the class
- * Takes user input for items from that list
- * Adds equipment to the equipment vector
- */
-void startingEquip(string Cclass, vector<string> *equipment){
-  if(Cclass == "Barbarian"){
-    (*equipment).push_back("Explorer's pack");
-    (*equipment).push_back("Javelin x4");
-  }else if(Cclass == "Bard"){
-  }else if(Cclass == "Rogue"){
-  }else if(Cclass == "Cleric"){
-  }else if(Cclass == "Druid"){
-  }else if(Cclass == "Fighter"){
-  }else if(Cclass == "Monk"){
-  }else if(Cclass == "Paladin"){
-  }else if(Cclass == "Ranger"){
-  }else if(Cclass == "Sorcerer"){
-  }else if(Cclass == "Wizard"){
-  }else if(Cclass == "Warlock"){   
-  }
-}
-
-/* Takes kills vector and user input for class and background
- * Displays list of starting skills for the given class and background
- * Takes user input for skills from that list
- * Adds skills to the skills vector
- */
-void pickSkills(string Cclass, string background, vector<string> *skills){
-  string st1, st2;
-
-  if(Cclass == "Barbarian"){
-  }else if(Cclass == "Bard"){
-  }else if(Cclass == "Rogue"){
-  }else if(Cclass == "Cleric"){
-  }else if(Cclass == "Druid"){
-  }else if(Cclass == "Fighter"){
-  }else if(Cclass == "Monk"){
-  }else if(Cclass == "Paladin"){
-  }else if(Cclass == "Ranger"){
-  }else if(Cclass == "Sorcerer"){
-  }else if(Cclass == "Wizard"){
-  }else if(Cclass == "Warlock"){   
-  }
-}
-
-/* Takes languages vector and user input for class, race, and background
- * Assigns languages based on class and race
- * Takes user input for languages from human, Half-elf, Acolyte, and Sage
- * Displays list of languages to choose from
- * Assigns selected language(s) to the language vector
- */
-void pickLanguages(string Cclass, string race, string background, vector<string> *languages){
-  bool select = false;
-  int count = 0;
-  int skip[] = {99, 99, 99};
-
-  string lang[] = {"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primodial", "Sylvan", "Undercommon", "Elvish", "Giant", "Dwarvish", "Gnomish", "Goblin", "Halfling", "Orc"};
-
-  (*languages).push_back("Common");
-
-  if(Cclass == "Druid")
-    (*languages).push_back("Druidic");
-  if(Cclass == "Rogue")
-    (*languages).push_back("Thieves' Cant");
-
-  if(background == "Acolyte" || background == "Sage"){
-    select = true;
-    count += 2;
-  }else if(background == "Haunted_One" || background == "Noble"){
-    select = true;
-    count++;
-  }
-  
-  if(race == "Dragonborn"){
-    (*languages).push_back("Draconic");
-    skip[0] = 2;
-  }else if(race == "Dwarf"){
-    (*languages).push_back("Dwarvish");
-    skip[0] = 10;
-  }else if(race == "Elf"){ 
-    (*languages).push_back("Elvish");
-    skip[0] = 8;
-  }else if(race == "Gnome"){
-    (*languages).push_back("Gnomish");
-    skip[0] = 11;
-  }else if(race == "Half-Elf"){
-    (*languages).push_back("Elvish");
-    skip[0] = 8;
-    count++;
-  }else if(race == "Halfling"){
-    (*languages).push_back("Halfling");
-    skip[0] = 13;
-  }else if(race == "Half-Orc"){
-    (*languages).push_back("Orc");
-    skip[0] = 14;
-  }else if(race == "Human"){
-    select = true;
-    count++;
-  }else if(race == "Tiefling"){
-    (*languages).push_back("Infernal");
-    skip[0] = 4;
-  }
-
-  for(int i = 0; i < count; i++){
-    string l;
-    int len = 14;
-    if(i == 0 && background == "Haunted_One") len = 8;
-
-    for(int i = 0; i < len; i++){
-      if(i != skip[0] && i != skip[1] && i != skip[2]){
-        cout << lang[i];
-        
-        if(i != len-1){
-          cout << ", ";
-        }else{
-          cout << ": ";
-        }
-      }
-    }
-    cin >> l;
-    (*languages).push_back(l);
-
-    auto itr = find(lang, lang + sizeof(lang)/sizeof(lang[0]), l);
-    skip[i+1] = distance(lang, itr);
-  }
-}
-
-void levelUp(int* level, int* maxHealth, int hitDie, int* stats, int* profBonus){
-  (*level)++;
-  if(*level > 1 && *level < 5){
-    *profBonus = 2;
-  }else if(*level > 4 && *level < 9){
-    *profBonus = 3;
-  }else if(*level > 8 && *level < 13){
-    *profBonus = 4;
-  }else if(*level > 12 && *level < 17){
-    *profBonus = 5;
-  }else if(*level > 16){
-    *profBonus = 6;
-  }
-  *maxHealth += ((*level - 1) * ((rand() % hitDie + 1) + ((*(stats + con))/2 - 5)));
-}
-
 int main() {
-  string race;
-  string Cclass;
-  string background;
-  vector<string> traits;
-  vector<string> saves;
-  vector<string> armorProf;
-  vector<string> weaponProf;
-  vector<string> toolProf;
-  vector<string> equipment;
-  vector<string> skills;
-  vector<string> languages;
+  _player player;
+
   int* stats = fillStats();
-  int hitDie;
-  int speed;
-  int maxHealth;
-  int profBonus = 2;
-  int level = 1;
+  string cClass;
+  string race;
+  string background;
 
   toString(stats);
 
   cout << "Class: ";
-  cin >> Cclass;
-
-  sortStats(Cclass, stats);
-  addSaves(Cclass, &saves);
-  classProfs(Cclass, &armorProf, &weaponProf, &toolProf);
-  startingEquip(Cclass, &equipment);
-
-  hitDie = addHitDie(Cclass);
-  //speed = calcSpeed(Cclass);
-
+  cin >> cClass;
+  setClass(cClass, player.playerClass);
+  
+  player.setStats(stats);
   cout << "Stats: " << endl;
-  toString(stats);
+  toString(player.getStats());
+
+  player.setHitDie();
+  cout << "Hit Die: " << player.getHitDie() << endl << endl;
+
+  player.setSaves();
   cout << "Saves: " << endl;
-  vToString(saves);
+  vToString(player.getSaves());
+
+  player.setProfs();
   cout << "Armor Prof: " << endl;
-  vToString(armorProf);
+  vToString(player.getArmorProf());
   cout << "Weapon Prof: " << endl;
-  vToString(weaponProf);
-  cout << "Hit die: d" << hitDie << endl << endl;
+  vToString(player.getWeaponProf());
+  cout << "Tool Prof: " << endl;
+  vToString(player.getToolProf());
+
+  player.setMaxHealth();
+  cout << "Max Health: " << player.getMaxHealth() << endl;
+  cout << "Current Health: " << player.getCurrentHealth() << endl << endl;
 
   cout << "Race: ";
   cin >> race;
 
-  buffStats(race, stats);
-  addRacialTraits(race, &traits);
-  //check what else can be automated for race
+  setRace(race, player.playerRace);
 
-  maxHealth = hitDie + ((*(stats + con))/2 - 5);
-
-  cout << endl << "Background: ";
-  cin >> background;
-
+  player.buffStats();
   cout << "Stats: " << endl;
-  toString(stats);
+  toString(player.getStats());
 
-  pickLanguages(Cclass, race, background, &languages);
-  pickSkills(Cclass, background, &skills);
-  
-  //add starting spells
+  player.setTraits();
+  cout << "Traits: " << endl;
+  vToString(player.getTraits());
 
-  cout << "max health: " << maxHealth << endl << endl; 
+  player.setMaxHealth();
+  cout << "Max Health: " << player.getMaxHealth() << endl;
+  cout << "Current Health: " << player.getCurrentHealth() << endl << endl;
 
+  cout << "Background: ";
+  cin >> background;
+  setBackground(background, player.playerBackground);
+
+  player.setLanguages();
   cout << "Languages: " << endl;
-  vToString(languages);
+  vToString(player.getLanguages());
+
+  player.setSkills();
+  cout << "Skills: " << endl;
+  vToString(player.getSkills());
 
   return 0;
 }
@@ -686,46 +214,6 @@ int dropLowest(int dice[4]){
   return sum;
 }
 
-void heapify(int arr[], int n, int i) 
-{ 
-    int largest = i; // Initialize largest as root 
-    int l = 2 * i + 1; // left = 2*i + 1 
-    int r = 2 * i + 2; // right = 2*i + 2 
-  
-    // If left child is larger than root 
-    if (l < n && arr[l] > arr[largest]) 
-        largest = l; 
-  
-    // If right child is larger than largest so far 
-    if (r < n && arr[r] > arr[largest]) 
-        largest = r; 
-  
-    // If largest is not root 
-    if (largest != i) { 
-        swap(arr[i], arr[largest]); 
-  
-        // Recursively heapify the affected sub-tree 
-        heapify(arr, n, largest); 
-    } 
-} 
-  
-// main function to do heap sort 
-void heapSort(int arr[], int n) 
-{ 
-    // Build heap (rearrange array) 
-    for (int i = n / 2 - 1; i >= 0; i--) 
-        heapify(arr, n, i); 
-  
-    // One by one extract an element from heap 
-    for (int i = n - 1; i >= 0; i--) { 
-        // Move current root to end 
-        swap(arr[0], arr[i]); 
-  
-        // call max heapify on the reduced heap 
-        heapify(arr, i, 0); 
-    } 
-}
-
 /* Take no input
  * Roll 4d6 6 times
  * Save the sums of 4d6 drop the lowest
@@ -739,7 +227,7 @@ int* fillStats() {
 
   for(int i = 0; i < 6; i++){
     for(int j = 0; j < 4; j++){
-      dice[j] = ((rand() % 6) + 1);
+      dice[j] = ((rand() % D6) + 1);
     }
     stats[i] = dropLowest(dice);
   }
