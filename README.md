@@ -6,3 +6,5 @@ Feel free to use this program however you please with exception of adding or att
 I am working on this program as a resume builder. I will look at suggestions, but I will not use anyone else's code.
 
 I am working on the functionality of the program before I work on the GUI which I plan to implement with QT.
+
+Read "CHANGE LOG.md" for changes between version and anything known issues.
