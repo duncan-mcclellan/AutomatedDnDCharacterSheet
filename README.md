@@ -8,3 +8,5 @@ I am working on this program as a resume builder. I will look at suggestions, bu
 I am working on the functionality of the program before I work on the GUI which I plan to implement with QT.
 
 Read "CHANGE LOG.md" for changes between version and anything known issues.
+
+[![Run on Repl.it](https://repl.it/badge/github/DuncanMcClellan/AutomatedDnDCharacterSheet)](https://repl.it/github/DuncanMcClellan/AutomatedDnDCharacterSheet)
