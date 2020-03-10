@@ -133,9 +133,13 @@ class HalfElf : public _race{
       (*languages).push_back("Elvish");
       allLangs.remove("Elvish");
       string lang;
-      for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it)
-        std::cout << ' ' << *it;
-      std::cout << ": " << endl;
+      cout << "[";
+      for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
+        std::cout << *it;
+        if(*it != allLangs.back())
+          cout << ", ";
+      }
+      cout << "]: ";
       std::cin >> lang;
       (*languages).push_back(lang);
       allLangs.remove(lang);
@@ -198,9 +202,13 @@ class Human : public _race{
 
     void addLanguages(vector<string> *languages){
       string lang;
-      for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it)
-        std::cout << ' ' << *it;
-      std::cout << ": " << endl;
+      cout << "[";
+      for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
+        std::cout << *it;
+        if(*it != allLangs.back())
+          cout << ", ";
+      }
+      cout << "]: ";
       std::cin >> lang;
       (*languages).push_back(lang);
       allLangs.remove(lang);

@@ -69,6 +69,7 @@ class _player{
       }
       this->languages.push_back("Common");
       this->playerClass->addLanguages(&languages);
+      //this->playerRace->setLanguages(&languages);
       this->playerBackground->addLanguages(&languages);
       this->playerRace->addLanguages(&languages);
     }

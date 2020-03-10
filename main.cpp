@@ -2,7 +2,7 @@
  * Created: 01/13/2020
  * Tested: Untested
  * Version: 0.1.1
- * Updated: 03/06/2020
+ * Updated: 03/10/2020
  *
  * Desc: 
  * A D&D 5e character sheet that fills your stats, proficiencies, etc. to allow a character to be created with minimal effort.
@@ -13,10 +13,13 @@
  * 0.1.0: Auto rolls stats, organizes stats for class, sets save roll stats, sets armor and weapon proficiencies, sets hit die, boosts stats based on race, sets starting health.
  * 0.1.1: Saves are displayed as the stat name rather than their array location. Languages are assigned and extra languages can be choosen when appropriate.
  * 0.2.0: Refactored code.
+ * 0.2.1: Race, Class, and Background selection are no longer case-sensitive. Bard can now choose 3 Instruments. Monk can now choose an Artisan's Tool or an Instrument. Stats output now shows the order of stats.
  *
  * Known Issues:
- * Proficiency assignment doesn't work for Bard due to instrument selection not working yet.
- * Proficiency assignment doesn't work for Monk due to not allowing selection between artisan tool or instrument and the selections that will come after.
+ * Instrument list doesn't always output correctly for Bard after making an instrument selection
+ * Skills are not assigned
+ * Languages for backgrounds that get languages (with the exception of Haunted One) will accept invalid input
+ * Languages provided from race are valid options when selecting background languages
  */
 
 //Included Libraries
@@ -33,87 +36,123 @@ using namespace std;
 #include "toString.h"
 #include "heapSort.h"
 
-/* Takes cClass string and reference to playerClass
+/* Takes reference to playerClass
+ * Gets user input for cClass
  * Sets playerClass to cClass
  */
-void setClass(string cClass, _class*& playerClass){
-  if(cClass == "Barbarian"){
-    playerClass = new Barbarian();
-  }else if(cClass == "Bard"){
-    playerClass = new Bard();
-  }else if(cClass == "Cleric"){
-    playerClass = new Cleric();
-  }else if(cClass == "Druid"){
-    playerClass = new Druid();
-  }else if(cClass == "Fighter"){
-    playerClass = new Fighter();
-  }else if(cClass == "Monk"){
-    playerClass = new Monk();
-  }else if(cClass == "Paladin"){
-    playerClass = new Paladin();
-  }else if(cClass == "Ranger"){
-    playerClass = new Ranger();
-  }else if(cClass == "Rogue"){
-    playerClass = new Rogue();
-  }else if(cClass == "Sorcerer"){
-    playerClass = new Sorcerer();
-  }else if(cClass == "Warlock"){
-    playerClass = new Warlock();
-  }else if(cClass == "Wizard"){
-    playerClass = new Wizard();
-  }else{
-    cout << "Invalid class option made" << endl;
-  }
+void setClass(_class*& playerClass){
+  bool c;
+  do{
+    c = true;
+
+    string cClass;
+    cout << "Class: ";
+    cin >> cClass;
+    transform(cClass.begin(), cClass.end(), cClass.begin(), ::tolower);
+
+    if(cClass == "barbarian"){
+      playerClass = new Barbarian();
+    }else if(cClass == "bard"){
+      playerClass = new Bard();
+    }else if(cClass == "cleric"){
+      playerClass = new Cleric();
+    }else if(cClass == "druid"){
+      playerClass = new Druid();
+    }else if(cClass == "fighter"){
+      playerClass = new Fighter();
+    }else if(cClass == "monk"){
+      playerClass = new Monk();
+    }else if(cClass == "paladin"){
+      playerClass = new Paladin();
+    }else if(cClass == "ranger"){
+      playerClass = new Ranger();
+    }else if(cClass == "rogue"){
+      playerClass = new Rogue();
+    }else if(cClass == "sorcerer"){
+      playerClass = new Sorcerer();
+    }else if(cClass == "warlock"){
+      playerClass = new Warlock();
+    }else if(cClass == "wizard"){
+      playerClass = new Wizard();
+    }else{
+      cout << "Invalid class option made." << endl << "Selection must be Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, or Wizard" << endl;
+      c = false;
+    }
+  }while(!c);
 }
 
-/* Takes race string and reference to playerRace
+/* Takes reference to playerRace
+ * Gets user input for race
  * Sets playerRace to race
  */
-void setRace(string race, _race*& playerRace){
-  if(race == "Dragonborn"){
-    playerRace = new Dragonborn();
-  }else if(race == "Dwarf"){
-    playerRace = new Dwarf();
-  }else if(race == "Elf"){
-    playerRace = new Elf();
-  }else if(race == "Gnome"){
-    playerRace = new Gnome();
-  }else if(race == "Half-Elf"){
-    playerRace = new HalfElf();
-  }else if(race == "Halfling"){
-    playerRace = new Halfling();
-  }else if(race == "Half-Orc"){
-    playerRace = new HalfOrc();
-  }else if(race == "Human"){
-    playerRace = new Human();
-  }else if(race == "Tiefling"){
-    playerRace = new Tiefling();
-  }else{
-    cout << "Invalid race option made" << endl;
-  }
+void setRace(_race*& playerRace){
+  bool c;
+  do{
+    c = true;
+
+    string race;
+    cout << "Race: ";
+    cin >> race;
+    transform(race.begin(), race.end(), race.begin(), ::tolower);
+
+    if(race == "dragonborn"){
+      playerRace = new Dragonborn();
+    }else if(race == "dwarf"){
+      playerRace = new Dwarf();
+    }else if(race == "elf"){
+      playerRace = new Elf();
+    }else if(race == "gnome"){
+      playerRace = new Gnome();
+    }else if(race == "half-elf"){
+      playerRace = new HalfElf();
+    }else if(race == "halfling"){
+      playerRace = new Halfling();
+    }else if(race == "half-orc"){
+      playerRace = new HalfOrc();
+    }else if(race == "human"){
+      playerRace = new Human();
+    }else if(race == "tiefling"){
+      playerRace = new Tiefling();
+    }else{
+      cout << "Invalid race option made." << endl << "Selection must be Dragonborn, Dwarf, Elf, Gnome, Half-Elf, Halfling, Half-Orc, Human, or Tiefling" << endl;
+    }
+  }while(!c);
+  cout << endl;
 }
 
-/* Takes background string and reference to playerBackground
+/* Takes reference to playerBackground
+ * Gets user input for background
  * Sets playerBackground to background
  */
-void setBackground(string background, _background*& playerBackground){
-  if(background == "Acolyte"){
-    playerBackground = new Acolyte();
-  }else if(background == "Criminal"){
-    playerBackground = new Criminal();
-  }else if(background == "Folk_Hero"){
-    playerBackground = new FolkHero();
-  }else if(background == "Haunted_One"){
-    playerBackground = new HauntedOne();
-  }else if(background == "Noble"){
-    playerBackground = new Noble();
-  }else if(background == "Sage"){
-    playerBackground = new Sage();
-  }else if(background == "Soldier"){
-    playerBackground = new Soldier();
-  }else{
-    cout << "Invalid background option made" << endl;
-  }
+void setBackground(_background*& playerBackground){
+  bool c;
+  do{
+    c = true;
+
+    string background;
+    cout << "Background: ";
+    cin >> background;
+    transform(background.begin(), background.end(), background.begin(), ::tolower);
+
+    if(background == "acolyte"){
+      playerBackground = new Acolyte();
+    }else if(background == "criminal"){
+      playerBackground = new Criminal();
+    }else if(background == "folk_hero"){
+      playerBackground = new FolkHero();
+    }else if(background == "haunted_one"){
+      playerBackground = new HauntedOne();
+    }else if(background == "noble"){
+      playerBackground = new Noble();
+    }else if(background == "sage"){
+      playerBackground = new Sage();
+    }else if(background == "soldier"){
+      playerBackground = new Soldier();
+    }else{
+      cout << "Invalid background option made" << endl << "Selection must be Acolyte, Criminal, Folk_Hero, Haunted_One, Noble, Sage, or Soldier" << endl;
+    }
+  }while(!c);
+  cout << endl;
 }
 
 /* Used to test the player class
@@ -124,18 +163,13 @@ int main() {
   _player player;
 
   int* stats = fillStats();
-  string cClass;
-  string race;
-  string background;
 
   toString(stats);
 
-  cout << "Class: ";
-  cin >> cClass;
-  setClass(cClass, player.playerClass);
+  setClass(player.playerClass);
   
   player.setStats(stats);
-  cout << "Stats: " << endl;
+  cout << "Stats [Str, Dex, Con, Int, Wis, Cha]: " << endl;
   toString(player.getStats());
 
   player.setHitDie();
@@ -157,13 +191,10 @@ int main() {
   cout << "Max Health: " << player.getMaxHealth() << endl;
   cout << "Current Health: " << player.getCurrentHealth() << endl << endl;
 
-  cout << "Race: ";
-  cin >> race;
-
-  setRace(race, player.playerRace);
+  setRace(player.playerRace);
 
   player.buffStats();
-  cout << "Stats: " << endl;
+  cout << "Stats [Str, Dex, Con, Int, Wis, Cha]: " << endl;
   toString(player.getStats());
 
   player.setTraits();
@@ -174,12 +205,10 @@ int main() {
   cout << "Max Health: " << player.getMaxHealth() << endl;
   cout << "Current Health: " << player.getCurrentHealth() << endl << endl;
 
-  cout << "Background: ";
-  cin >> background;
-  setBackground(background, player.playerBackground);
+  setBackground(player.playerBackground);
 
   player.setLanguages();
-  cout << "Languages: " << endl;
+  cout << endl << "Languages: " << endl;
   vToString(player.getLanguages());
 
   player.setSkills();

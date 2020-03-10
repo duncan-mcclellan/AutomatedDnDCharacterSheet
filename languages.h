@@ -6,5 +6,6 @@
 
 std::list<string> allLangs;
 string langs[] = {"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primodial", "Sylvan", "Undercommon", "Elvish", "Giant", "Dwarvish", "Gnomish", "Goblin", "Halfling", "Orc"};
+string exotics[] = {"Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primodial", "Sylvan", "Undercommon"};
 
 #endif

@@ -4,6 +4,7 @@
 //Included Libraries
 #include <iostream>
 #include <vector>
+#include <boost/algorithm/string/predicate.hpp>
 
 //Included Headers
 #include "main.h"
@@ -87,6 +88,7 @@ class Bard : public _class{
     int getHitDie(){return hitDie;}
 
     void setProfs(vector<string> *armorProf, vector<string> *weaponProf, vector<string> *toolProf){
+      string instruments[] = {"Bagpipes", "Drum", "Dulcimer", "Flute", "Lute", "Lyre", "Horn", "Pan_flute", "Shawm", "Viol"};
       string tool;
       (*armorProf).push_back("Light");
       (*weaponProf).push_back("Simple");
@@ -94,12 +96,28 @@ class Bard : public _class{
       (*weaponProf).push_back("Longswords");
       (*weaponProf).push_back("Rapiers");
       (*weaponProf).push_back("Shortswords");
+
       for(int i = 0; i < 3; i++){
-        cout << "[]: ";
-        cin >> tool;
+        bool c = false;
+        do{
+          cout << "[";
+          for(int j = 0; j < sizeof(instruments)/sizeof(*instruments); j++)
+            if(i == 0 || (i == 1 && (i > 0 && !boost::iequals((*toolProf).at(0), instruments[j]))) || ((i > 0 && !boost::iequals((*toolProf).at(0), instruments[j])) && (i > 1 && !boost::iequals((*toolProf).at(1), instruments[j])))){
+            cout << instruments[j];
+              if(j != sizeof(instruments)/sizeof(*instruments) - (i + 1) && j != sizeof(instruments)/sizeof(*instruments) - 1){
+                cout << ", ";
+              }
+            }
+          cout << "]: ";
+          cin >> tool;
+          for(int j = 0; j < sizeof(instruments)/sizeof(*instruments); j++)
+            if(boost::iequals(tool, instruments[j]))
+              c = true;
+        }while(!c);
 
         (*toolProf).push_back(tool);
       }
+      cout << endl;
     }
 };
 
@@ -245,11 +263,39 @@ class Monk : public _class{
 
     void setProfs(vector<string> *armorProf, vector<string> *weaponProf, vector<string> *toolProf){
       string tool;
+      bool c1 = true, c2 = false;
       (*weaponProf).push_back("Simple"); 
       (*weaponProf).push_back("Shortswords");
+      
+      do{
+        c1 = true;
+        cout << "artisan or instrument: ";
+        cin >> tool;
 
-      for(int i = 0; i < 5; i++)
-        cout << "artisan or instrument";
+        if(boost::iequals(tool, "artisan")){
+          string tools[] = {"Alchemist", "Brewer", "Calligrapher", "Carpenter", "Cartographer", "Cobbler", "Cook", "Glassblower", "Jeweler", "Leatherworker", "Mason", "Painter", "Potter", "Smith", "Tinker", "Weaver", "Woodcarver"};
+          do{
+            cout << "[Alchemist, Brewer, Calligrapher, Carpenter, Cartographer, Cobbler, Cook, Glassblower, Jeweler, Leatherworker, Mason, Painter, Potter, Smith, Tinker, Weaver, Woodcarver]: ";
+            cin >> tool;
+            for(int i = 0; i < (sizeof(tools)/sizeof(*tools)); i++)
+              if(boost::iequals(tool, tools[i]))
+                c2 = true;
+          }while(!c2);
+        }else if(tool == "instrument"){
+          string instruments[] = {"Bagpipes", "Drum", "Dulcimer", "Flute", "Lute", "Lyre", "Horn", "Pan_flute", "Shawm", "Viol"};
+          do{
+            cout << "[Bagpipes, Drum, Dulcimer, Flute, Lute, Lyre, Horn, Pan_flute, Shawm, Viol]: ";
+            cin >> tool;
+            for(int i = 0; i < (sizeof(instruments)/sizeof(*instruments)); i++)
+              if(boost::iequals(tool, instruments[i]))
+                c2 = true;
+          }while(!c2);
+        }else{
+          cout << "Invalid selection" << endl;
+          c1 = false;
+        }
+      }while(!c1);
+        
       (*toolProf).push_back(tool);
     }
 };
