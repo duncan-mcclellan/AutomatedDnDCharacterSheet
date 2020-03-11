@@ -5,9 +5,10 @@ Updated: 03/06/2020
 0.1.1: Saves are displayed as the stat name rather than their array location. Languages are assigned and extra languages can be choosen when appropriate.
 0.2.0: Refactored code.
 0.2.1: Race, Class, and Background selection are no longer case-sensitive. Bard can now choose 3 Instruments. Monk can now choose an Artisan's Tool or an Instrument. Stats output now shows the order of stats.
+0.2.2: Speed now gets assigned. When selecting languages, only valid options will be accepted and languages provided by race no longer show up as an option when choosing background language(s). Fixed instrument list for Bard.
 
 Known Issues:
-Instrument list doesn't always output correctly for Bard after making an instrument selection
-Skills are not assigned
-Languages for backgrounds that get languages (with the exception of Haunted One) will accept invalid input
-Languages provided from race are valid options when selecting background languages
+Skills are not assigned.
+Starting Equipment is not assigned
+Starting Spells are not assigned
+Certain classes need to be allowed more customizability

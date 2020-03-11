@@ -57,7 +57,9 @@ class _player{
 
     void setStartingEquipment(){playerClass->setStartingEquipment(&equipment);}
 
-    void setSpeed(){this->speed = playerClass->calcSpeed();}
+    void setSpeed(){this->speed = playerRace->getSpeed();}
+
+    int getSpeed(){return this->speed;}
 
     void setTraits(){playerRace->setTraits(&traits);}
 
@@ -69,9 +71,9 @@ class _player{
       }
       this->languages.push_back("Common");
       this->playerClass->addLanguages(&languages);
-      //this->playerRace->setLanguages(&languages);
+      this->playerRace->setLanguage(&languages);
       this->playerBackground->addLanguages(&languages);
-      this->playerRace->addLanguages(&languages);
+      this->playerRace->addLanguage(&languages);
     }
 
     vector<string> getLanguages(){return this->languages;}

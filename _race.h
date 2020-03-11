@@ -6,8 +6,11 @@
 class _race{
   public:
     virtual void buffStats(int* stats) = 0;
-    virtual void addLanguages(vector<string> *languages) = 0;
+    virtual void setLanguage(vector<string> *languages) = 0;
     virtual void setTraits(vector<string> *traits) = 0;
+    virtual int getSpeed() = 0;
+    virtual bool reduceSpeed(){return true;};
+    virtual void addLanguage(vector<string> *languages){};
 };
 
 class Dragonborn : public _race{
@@ -17,7 +20,7 @@ class Dragonborn : public _race{
       *(stats + cha) += 1;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){
       (*languages).push_back("Draconic");
     }
 
@@ -26,6 +29,8 @@ class Dragonborn : public _race{
       (*traits).push_back("Breath Weapon");
       (*traits).push_back("Damage Resistance");
     }
+
+    int getSpeed(){return 30;}
 };
 
 class Dwarf : public _race{
@@ -34,7 +39,7 @@ class Dwarf : public _race{
       *(stats + con) += 2;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){
       (*languages).push_back("Dwarf");
     }
 
@@ -44,6 +49,10 @@ class Dwarf : public _race{
       (*traits).push_back("Dwarven Combat Training");
       (*traits).push_back("Stonecunning");
     }
+
+    int getSpeed(){return 25;}
+
+    bool reduceSpeed(){return false;}
 };
 
 class Elf : public _race{
@@ -52,7 +61,7 @@ class Elf : public _race{
       *(stats + dex) += 2;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){
       (*languages).push_back("Elvish");
     }
 
@@ -62,6 +71,8 @@ class Elf : public _race{
       (*traits).push_back("Fey Ancestry");
       (*traits).push_back("Trance"); 
     }
+
+    int getSpeed(){return 30;}
 };
 
 class Gnome : public _race{
@@ -70,7 +81,7 @@ class Gnome : public _race{
       *(stats + intel) += 2;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){
       (*languages).push_back("Gnomish");
     }
 
@@ -78,6 +89,8 @@ class Gnome : public _race{
       (*traits).push_back("Darkvision");
       (*traits).push_back("Gnome Cunning");
     }
+
+    int getSpeed(){return 25;}
 };
 
 class HalfElf : public _race{
@@ -128,10 +141,13 @@ class HalfElf : public _race{
       }
     }
 
-    void addLanguages(vector<string> *languages){
-      cout << "addLanguages - _race" << endl;
+    void setLanguage(vector<string> *languages){
+      cout << "setLanguage - _race" << endl;
       (*languages).push_back("Elvish");
       allLangs.remove("Elvish");
+    }
+
+    void addLanguage(vector<string> *languages){
       string lang;
       cout << "[";
       for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
@@ -150,6 +166,8 @@ class HalfElf : public _race{
       (*traits).push_back("Fey Ancestry");
       (*traits).push_back("Skill Versatility");
     }
+
+    int getSpeed(){return 30;}
 };
 
 class Halfling : public _race{
@@ -158,7 +176,7 @@ class Halfling : public _race{
       *(stats + dex) += 2;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){
       (*languages).push_back("Halfling");
     }
 
@@ -168,6 +186,8 @@ class Halfling : public _race{
       (*traits).push_back("Halfling");
       (*traits).push_back("Nimbleness"); 
     }
+
+    int getSpeed(){return 25;}
 };
 
 class HalfOrc : public _race{
@@ -177,7 +197,7 @@ class HalfOrc : public _race{
       *(stats + con) += 1;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){
       (*languages).push_back("Orc");
     }
 
@@ -187,6 +207,8 @@ class HalfOrc : public _race{
       (*traits).push_back("Relentless Endurance");
       (*traits).push_back("Savage Attacks");
     }
+
+    int getSpeed(){return 30;}
 };
 
 class Human : public _race{
@@ -200,7 +222,9 @@ class Human : public _race{
       *(stats + cha) += 1;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){}
+
+    void addLanguage(vector<string> *languages){
       string lang;
       cout << "[";
       for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
@@ -217,6 +241,8 @@ class Human : public _race{
     void setTraits(vector<string> *traits){
       (*traits).push_back("Extra Language"); 
     }
+
+    int getSpeed(){return 30;}
 };
 
 class Tiefling : public _race{
@@ -226,7 +252,7 @@ class Tiefling : public _race{
       *(stats + intel) += 1;
     }
 
-    void addLanguages(vector<string> *languages){
+    void setLanguage(vector<string> *languages){
       (*languages).push_back("Infernal");
     }
 
@@ -235,6 +261,8 @@ class Tiefling : public _race{
       (*traits).push_back("Hellish Resistance");
       (*traits).push_back("Infernal Legacy");
     }
+
+    int getSpeed(){return 30;}
 };
 
 #endif

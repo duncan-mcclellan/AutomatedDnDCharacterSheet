@@ -23,7 +23,6 @@ class _class{
     virtual int getHitDie() = 0;
     virtual void setProfs(vector<string> *armorProf, vector<string> *weaponProf, vector<string> *toolProf) = 0;
     virtual void setStartingEquipment(vector<string> *equipment){};
-    virtual int calcSpeed(){return 0;};
     virtual void addSkills(vector<string> *skills){};
     virtual void addLanguages(vector<string> *languages){};
 };
@@ -99,12 +98,13 @@ class Bard : public _class{
 
       for(int i = 0; i < 3; i++){
         bool c = false;
+        int tracker = sizeof(instruments)/sizeof(*instruments) - (i + 1), counter = 0;
         do{
           cout << "[";
           for(int j = 0; j < sizeof(instruments)/sizeof(*instruments); j++)
             if(i == 0 || (i == 1 && (i > 0 && !boost::iequals((*toolProf).at(0), instruments[j]))) || ((i > 0 && !boost::iequals((*toolProf).at(0), instruments[j])) && (i > 1 && !boost::iequals((*toolProf).at(1), instruments[j])))){
             cout << instruments[j];
-              if(j != sizeof(instruments)/sizeof(*instruments) - (i + 1) && j != sizeof(instruments)/sizeof(*instruments) - 1){
+              if(counter++ != tracker){
                 cout << ", ";
               }
             }
