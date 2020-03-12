@@ -11,6 +11,7 @@ class _race{
     virtual int getSpeed() = 0;
     virtual bool reduceSpeed(){return true;};
     virtual void addLanguage(vector<string> *languages){};
+    virtual void addSkills(vector<string> *skills){};
 };
 
 class Dragonborn : public _race{
@@ -73,6 +74,10 @@ class Elf : public _race{
     }
 
     int getSpeed(){return 30;}
+
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Perception");
+    }
 };
 
 class Gnome : public _race{
@@ -168,6 +173,32 @@ class HalfElf : public _race{
     }
 
     int getSpeed(){return 30;}
+
+    void addSkills(vector<string> *skills){
+      string s[] = {"Acrobatics", "Animal_Handling", "Arcana", "Athletics", "Deception", "History", "Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception", "Performance", "Persuasion", "Religion", "Sleight_of_Hand", "Stealth", "Survival"};
+      string skip = "";
+      for(int i = 0; i < 2; i++){
+        bool c = false;
+        do{
+          cout << "["
+          for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++)
+            if(boost::iequals(s[j], skip)){
+              cout << s[j];
+              if(j != (sizeof(s)/sizeof(*s) - 1)
+                cout << ", ";
+            }
+          cout << "]: "
+          string skill;
+          cin >> skill;
+          for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++)
+            if(boost::iequals(s[j], skip))
+              if(boost::iequals(skill, s[j])){
+                skip = s[j]
+                c = true;
+              }
+        }while(!c);
+        (*skills).push_back(skill);
+    }
 };
 
 class Halfling : public _race{
@@ -209,6 +240,10 @@ class HalfOrc : public _race{
     }
 
     int getSpeed(){return 30;}
+
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Intimidation");
+    }
 };
 
 class Human : public _race{
@@ -243,6 +278,26 @@ class Human : public _race{
     }
 
     int getSpeed(){return 30;}
+
+    void addSkills(vector<string> *skills){
+      string s[] = {"Acrobatics", "Animal_Handling", "Arcana", "Athletics", "Deception", "History", "Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception", "Performance", "Persuasion", "Religion", "Sleight_of_Hand", "Stealth", "Survival"};
+      bool c = false;
+      do{
+        cout << "["
+        for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++){
+          cout << s[j];
+          if(j != (sizeof(s)/sizeof(*s) - 1)
+            cout << ", ";
+        }
+        cout << "]: "
+        string skill;
+        cin >> skill;
+        for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++)
+          if(boost::iequals(skill, s[j]))
+            c = true;
+      }while(!c);
+      (*skills).push_back(skill);
+    }
 };
 
 class Tiefling : public _race{

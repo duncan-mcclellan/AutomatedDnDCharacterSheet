@@ -5,12 +5,17 @@
 
 class _background{
   public:
+    virtual void addSkills(vector<string> *skills) = 0;
     virtual void addLanguages(vector<string> *languages){};
-    virtual void addSkills(vector<string> *skills){};
 };
 
 class Acolyte : public _background{
   public:
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Insight");
+      (*skills).push_back("Religion");
+    }
+
     void addLanguages(vector<string> *languages){
       string lang;
       bool c = false;
@@ -51,6 +56,11 @@ class Acolyte : public _background{
 
 class Sage : public _background{
   public:
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Arcana");
+      (*skills).push_back("History");
+    }
+
     void addLanguages(vector<string> *languages){
       string lang;
       bool c = false;
@@ -91,6 +101,33 @@ class Sage : public _background{
 
 class HauntedOne : public _background{
   public:
+    void addSkills(vector<string> *skills){
+      string s[] = {"Arcana", "Investigation", "Religion", "Survival"};
+      string skip = "";
+      for(int i = 0; i < 2; i++){
+        bool c = false;
+        do{
+          cout << "["
+          for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++)
+            if(boost::iequals(s[j], skip)){
+              cout << s[j];
+              if(j != (sizeof(s)/sizeof(*s) - 1)
+                cout << ", ";
+            }
+          cout << "]: "
+          string skill;
+          cin >> skill;
+          for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++)
+            if(boost::iequals(s[j], skip))
+              if(boost::iequals(skill, s[j])){
+                skip = s[j]
+                c = true;
+              }
+        }while(!c);
+        (*skills).push_back(skill);
+      }
+    }
+
     void addLanguages(vector<string> *languages){
       string lang;
       bool c = false;
@@ -114,6 +151,11 @@ class HauntedOne : public _background{
 
 class Noble : public _background{
   public:
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Persuasion");
+      (*skills).push_back("History");
+    }
+
     void addLanguages(vector<string> *languages){
       string lang;
       bool c = false;
@@ -136,15 +178,27 @@ class Noble : public _background{
 };
 
 class Criminal : public _background{
-
+  public:
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Deception");
+      (*skills).push_back("Stealth");
+    }
 };
 
 class FolkHero : public _background{
-
+  public:
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Animal Handling");
+      (*skills).push_back("Survival");
+    }
 };
 
 class Soldier : public _background{
-
+  public:
+    void addSkills(vector<string> *skills){
+      (*skills).push_back("Athletics");
+      (*skills).push_back("Intimidation");
+    }
 };
 
 #endif

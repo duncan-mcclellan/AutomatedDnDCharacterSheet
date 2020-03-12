@@ -2,7 +2,7 @@
  * Created: 01/13/2020
  * Tested: Untested
  * Version: 0.1.1
- * Updated: 03/10/2020
+ * Updated: 03/12/2020
  *
  * Desc: 
  * A D&D 5e character sheet that fills your stats, proficiencies, etc. to allow a character to be created with minimal effort.
@@ -15,12 +15,12 @@
  * 0.2.0: Refactored code.
  * 0.2.1: Race, Class, and Background selection are no longer case-sensitive. Bard can now choose 3 Instruments. Monk can now choose an Artisan's Tool or an Instrument. Stats output now shows the order of stats.
  * 0.2.2: Speed now gets assigned. When selecting languages, only valid options will be accepted and languages provided by race no longer show up as an option when choosing background language(s). Fixed instrument list for Bard.
+ * 0.2.3: Provided Cleric, Fighter, Monk, and Warlock much needed customization options. Skills are now assigned.
  *
  * Known Issues:
- * Skills are not assigned.
- * Starting Equipment is not assigned
- * Starting Spells are not assigned
- * Certain classes need to be allowed more customizability
+ * Skills need to remove options already selected.
+ * Starting Equipment is not assigned.
+ * Starting Spells are not assigned.
  */
 
 //Included Libraries

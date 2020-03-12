@@ -79,8 +79,9 @@ class _player{
     vector<string> getLanguages(){return this->languages;}
 
     void setSkills(){
-      this->playerClass->addSkills(&skills);
+      this->playerRace->addSkills(&skills);
       this->playerBackground->addSkills(&skills);
+      this->playerClass->addSkills(&skills);
     }
 
     vector<string> getSkills(){return this->skills;}
