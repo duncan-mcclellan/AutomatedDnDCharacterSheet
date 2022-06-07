@@ -1,26 +1,13 @@
 /* Author: Duncan McClellan
  * Created: 01/13/2020
  * Tested: Untested
- * Version: 0.1.1
- * Updated: 03/12/2020
+ * Version: 0.2.3
+ * Updated: 06/07/2022
  *
  * Desc: 
  * A D&D 5e character sheet that fills your stats, proficiencies, etc. to allow a character to be created with minimal effort.
- * This should lower the barrier of entry for new players.
+ * This should lower the barrier of entry for new players and help players that just want to make a character really fast.
  * Not recommended for experienced players that wish to trail off the beaten path.
- * 
- * Changelog:
- * 0.1.0: Auto rolls stats, organizes stats for class, sets save roll stats, sets armor and weapon proficiencies, sets hit die, boosts stats based on race, sets starting health.
- * 0.1.1: Saves are displayed as the stat name rather than their array location. Languages are assigned and extra languages can be choosen when appropriate.
- * 0.2.0: Refactored code.
- * 0.2.1: Race, Class, and Background selection are no longer case-sensitive. Bard can now choose 3 Instruments. Monk can now choose an Artisan's Tool or an Instrument. Stats output now shows the order of stats.
- * 0.2.2: Speed now gets assigned. When selecting languages, only valid options will be accepted and languages provided by race no longer show up as an option when choosing background language(s). Fixed instrument list for Bard.
- * 0.2.3: Provided Cleric, Fighter, Monk, and Warlock much needed customization options. Skills are now assigned.
- *
- * Known Issues:
- * Skills need to remove options already selected.
- * Starting Equipment is not assigned.
- * Starting Spells are not assigned.
  */
 
 //Included Libraries
@@ -29,6 +16,7 @@
 #include <ctime>
 #include <vector>
 
+//This will get removed in a later version. I'm being lazy for the initial creation
 using namespace std;
 
 //Included Headers
@@ -37,49 +25,50 @@ using namespace std;
 #include "toString.h"
 #include "heapSort.h"
 
+string processInput(){
+  string input;
+  cin >> string;
+  
+  transform(string.begin(), string.end(), string.begin(), ::tolower);
+  
+  return string;
+}
+
 /* Takes reference to playerClass
  * Gets user input for cClass
  * Sets playerClass to cClass
  */
 void setClass(_class*& playerClass){
-  bool c;
-  do{
-    c = true;
+  string cClass = processInput();
 
-    string cClass;
-    cout << "Class: ";
-    cin >> cClass;
-    transform(cClass.begin(), cClass.end(), cClass.begin(), ::tolower);
-
-    if(cClass == "barbarian"){
-      playerClass = new Barbarian();
-    }else if(cClass == "bard"){
-      playerClass = new Bard();
-    }else if(cClass == "cleric"){
-      playerClass = new Cleric();
-    }else if(cClass == "druid"){
-      playerClass = new Druid();
-    }else if(cClass == "fighter"){
-      playerClass = new Fighter();
-    }else if(cClass == "monk"){
-      playerClass = new Monk();
-    }else if(cClass == "paladin"){
-      playerClass = new Paladin();
-    }else if(cClass == "ranger"){
-      playerClass = new Ranger();
-    }else if(cClass == "rogue"){
-      playerClass = new Rogue();
-    }else if(cClass == "sorcerer"){
-      playerClass = new Sorcerer();
-    }else if(cClass == "warlock"){
-      playerClass = new Warlock();
-    }else if(cClass == "wizard"){
-      playerClass = new Wizard();
-    }else{
-      cout << "Invalid class option made." << endl << "Selection must be Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, or Wizard" << endl;
-      c = false;
-    }
-  }while(!c);
+  if(cClass.strncmp("barbarian")){
+    playerClass = new Barbarian();
+  }else if(cClass.strncmp("bard")){
+    playerClass = new Bard();
+  }else if(cClass.strncmp("cleric")){
+    playerClass = new Cleric();
+  }else if(cClass.strncmp("druid")){
+    playerClass = new Druid();
+  }else if(cClass.strncmp("fighter")){
+    playerClass = new Fighter();
+  }else if(cClass.strncmp("monk")){
+    playerClass = new Monk();
+  }else if(cClass.strncmp("paladin")){
+    playerClass = new Paladin();
+  }else if(cClass.strncmp("ranger")){
+    playerClass = new Ranger();
+  }else if(cClass.strncmp("rogue")){
+    playerClass = new Rogue();
+  }else if(cClass.strncmp("sorcerer")){
+    playerClass = new Sorcerer();
+  }else if(cClass.strncmp("warlock")){
+    playerClass = new Warlock();
+  }else if(cClass.strncmp("wizard")){
+    playerClass = new Wizard();
+  }else{
+    cout << "Invalid class option made." << endl << "Selection must be Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, or Wizard" << endl;
+    setClass(playerClass);
+  }
   cout << endl;
 }
 
@@ -88,37 +77,30 @@ void setClass(_class*& playerClass){
  * Sets playerRace to race
  */
 void setRace(_race*& playerRace){
-  bool c;
-  do{
-    c = true;
+  string race = processInput();
 
-    string race;
-    cout << "Race: ";
-    cin >> race;
-    transform(race.begin(), race.end(), race.begin(), ::tolower);
-
-    if(race == "dragonborn"){
-      playerRace = new Dragonborn();
-    }else if(race == "dwarf"){
-      playerRace = new Dwarf();
-    }else if(race == "elf"){
-      playerRace = new Elf();
-    }else if(race == "gnome"){
-      playerRace = new Gnome();
-    }else if(race == "half-elf"){
-      playerRace = new HalfElf();
-    }else if(race == "halfling"){
-      playerRace = new Halfling();
-    }else if(race == "half-orc"){
-      playerRace = new HalfOrc();
-    }else if(race == "human"){
-      playerRace = new Human();
-    }else if(race == "tiefling"){
-      playerRace = new Tiefling();
-    }else{
-      cout << "Invalid race option made." << endl << "Selection must be Dragonborn, Dwarf, Elf, Gnome, Half-Elf, Halfling, Half-Orc, Human, or Tiefling" << endl;
-    }
-  }while(!c);
+  if(race == "dragonborn"){
+    playerRace = new Dragonborn();
+  }else if(race == "dwarf"){
+    playerRace = new Dwarf();
+  }else if(race == "elf"){
+    playerRace = new Elf();
+  }else if(race == "gnome"){
+    playerRace = new Gnome();
+  }else if(race == "half-elf"){
+    playerRace = new HalfElf();
+  }else if(race == "halfling"){
+    playerRace = new Halfling();
+  }else if(race == "half-orc"){
+    playerRace = new HalfOrc();
+  }else if(race == "human"){
+    playerRace = new Human();
+  }else if(race == "tiefling"){
+    playerRace = new Tiefling();
+  }else{
+    cout << "Invalid race option made." << endl << "Selection must be Dragonborn, Dwarf, Elf, Gnome, Half-Elf, Halfling, Half-Orc, Human, or Tiefling" << endl;
+    setRace(playerRace);
+  }
   cout << endl;
 }
 
@@ -127,33 +109,26 @@ void setRace(_race*& playerRace){
  * Sets playerBackground to background
  */
 void setBackground(_background*& playerBackground){
-  bool c;
-  do{
-    c = true;
+  string background = processInput();
 
-    string background;
-    cout << "Background: ";
-    cin >> background;
-    transform(background.begin(), background.end(), background.begin(), ::tolower);
-
-    if(background == "acolyte"){
-      playerBackground = new Acolyte();
-    }else if(background == "criminal"){
-      playerBackground = new Criminal();
-    }else if(background == "folk_hero"){
-      playerBackground = new FolkHero();
-    }else if(background == "haunted_one"){
-      playerBackground = new HauntedOne();
-    }else if(background == "noble"){
-      playerBackground = new Noble();
-    }else if(background == "sage"){
-      playerBackground = new Sage();
-    }else if(background == "soldier"){
-      playerBackground = new Soldier();
-    }else{
-      cout << "Invalid background option made" << endl << "Selection must be Acolyte, Criminal, Folk_Hero, Haunted_One, Noble, Sage, or Soldier" << endl;
-    }
-  }while(!c);
+  if(background == "acolyte"){
+    playerBackground = new Acolyte();
+  }else if(background == "criminal"){
+    playerBackground = new Criminal();
+  }else if(background == "folk_hero"){
+    playerBackground = new FolkHero();
+  }else if(background == "haunted_one"){
+    playerBackground = new HauntedOne();
+  }else if(background == "noble"){
+    playerBackground = new Noble();
+  }else if(background == "sage"){
+    playerBackground = new Sage();
+  }else if(background == "soldier"){
+    playerBackground = new Soldier();
+  }else{
+    cout << "Invalid background option made" << endl << "Selection must be Acolyte, Criminal, Folk_Hero, Haunted_One, Noble, Sage, or Soldier" << endl;
+    setBackground(playerBackground);
+  }
   cout << endl;
 }
 
@@ -168,6 +143,7 @@ int main() {
 
   toString(stats);
 
+  cout << "Class: ";
   setClass(player.playerClass);
   
   player.setStats(stats);
@@ -193,6 +169,7 @@ int main() {
   cout << "Max Health: " << player.getMaxHealth() << endl;
   cout << "Current Health: " << player.getCurrentHealth() << endl << endl;
 
+  cout << "Race: ";
   setRace(player.playerRace);
 
   player.buffStats();
@@ -210,6 +187,7 @@ int main() {
   cout << "Max Health: " << player.getMaxHealth() << endl;
   cout << "Current Health: " << player.getCurrentHealth() << endl << endl;
 
+  cout << "Background: ";
   setBackground(player.playerBackground);
 
   player.setLanguages();
@@ -223,31 +201,6 @@ int main() {
   return 0;
 }
 
-/* Take dice rolls
- * Drop lowest valued roll
- * Return sum of saved rolls
- */
-int dropLowest(int dice[4]){
-  int lowest = 7; //a die can never have a value larger than 6
-  int index;
-  int sum = 0;
-
-  for(int i = 0; i < 4; i++){
-    if(dice[i] < lowest){
-      lowest = dice[i];
-      index = i;
-    }
-  }
-
-  for(int i = 0; i < 4; i++){
-    if(i != index){
-      sum += dice[i];
-    }
-  }
-
-  return sum;
-}
-
 /* Take no input
  * Roll 4d6 6 times
  * Save the sums of 4d6 drop the lowest
@@ -255,15 +208,22 @@ int dropLowest(int dice[4]){
  */
 int* fillStats() {
   static int stats[6];
-  int dice[4];
 
   srand((unsigned)time(NULL));
 
   for(int i = 0; i < 6; i++){
+    int sum = 0;
+    int lowest = 7;
+    
     for(int j = 0; j < 4; j++){
-      dice[j] = ((rand() % D6) + 1);
+      int value = ((rand() % D6) + 1);
+      sum += value;
+      
+      if(value < lowest)
+        lowest = value;
     }
-    stats[i] = dropLowest(dice);
+    
+    stats[i] = sum - value;
   }
 
   heapSort(stats, sizeof(stats)/sizeof(stats[0]));
