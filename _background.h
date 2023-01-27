@@ -2,203 +2,127 @@
 #define BACKGROUND_H_INCLUDED
 
 #include "languages.h"
+#include "listHandler.h"
 
-class _background{
-  public:
-    virtual void addSkills(vector<string> *skills) = 0;
-    virtual void addLanguages(vector<string> *languages){};
+class _background {
+protected:
+	void addLanguages(vector<string> *languages, int numLangs) {
+		if (numLangs <= 0)
+			return;
+
+		outputStringList(allLangs);
+
+		string lang;
+		cin >> lang;
+
+		if (!listContains(allLangs, lang)) {
+			cout << "Not a valid language!" << endl;
+			addLanguages(languages, numLangs);
+			return;
+		}
+
+		languages->push_back(lang);
+		allLangs.remove(lang);
+		addLanguages(languages, --numLangs);
+	}
+
+public:
+	virtual void addSkills(vector<string> *skills) = 0;
+	virtual void addLanguages(vector<string> *languages){};
 };
 
-class Acolyte : public _background{
-  public:
-    void addSkills(vector<string> *skills){
-      (*skills).push_back("Insight");
-      (*skills).push_back("Religion");
-    }
+class Acolyte : public _background {
+public:
+	void addSkills(vector<string> *skills) {
+		skills->push_back("Insight");
+		skills->push_back("Religion");
+	}
 
-    void addLanguages(vector<string> *languages){
-      string lang;
-      bool c = false;
-      do{
-        cout << "[";
-        for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
-          std::cout << *it;
-          if(*it != allLangs.back())
-            cout << ", ";
-        }
-        cout << "]: ";
-        std::cin >> lang;
-        for(std::list<string>::iterator it = allLangs.begin(); it != allLangs.end(); it++)
-          if(boost::iequals(lang, *it))
-            c = true;
-      }while(!c);
-      (*languages).push_back(lang);
-      allLangs.remove(lang);
-
-      c = false;
-      do{
-        cout << "[";
-        for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
-          std::cout << *it;
-          if(*it != allLangs.back())
-            cout << ", ";
-        }
-        cout << "]: ";
-        std::cin >> lang;
-        for(std::list<string>::iterator it = allLangs.begin(); it != allLangs.end(); it++)
-          if(boost::iequals(lang, *it))
-            c = true;
-      }while(!c);
-      (*languages).push_back(lang);
-      allLangs.remove(lang);
-    }
+	void addLanguages(vector<string> *languages) {
+		_background::addLanguages(languages, 2);
+	}
 };
 
-class Sage : public _background{
-  public:
-    void addSkills(vector<string> *skills){
-      (*skills).push_back("Arcana");
-      (*skills).push_back("History");
-    }
+class Sage : public _background {
+public:
+	void addSkills(vector<string> *skills) {
+		skills->push_back("Arcana");
+		skills->push_back("History");
+	}
 
-    void addLanguages(vector<string> *languages){
-      string lang;
-      bool c = false;
-      do{
-        cout << "[";
-        for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
-          std::cout << *it;
-          if(*it != allLangs.back())
-            cout << ", ";
-        }
-        cout << "]: ";
-        std::cin >> lang;
-        for(std::list<string>::iterator it = allLangs.begin(); it != allLangs.end(); it++)
-          if(boost::iequals(lang, *it))
-            c = true;
-      }while(!c);
-      (*languages).push_back(lang);
-      allLangs.remove(lang);
-      
-      c = false;
-      do{
-        cout << "[";
-        for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
-          std::cout << *it;
-          if(*it != allLangs.back())
-            cout << ", ";
-        }
-        cout << "]: ";
-        std::cin >> lang;
-        for(std::list<string>::iterator it = allLangs.begin(); it != allLangs.end(); it++)
-          if(boost::iequals(lang, *it))
-            c = true;
-      }while(!c);
-      (*languages).push_back(lang);
-      allLangs.remove(lang);
-    }
+	void addLanguages(vector<string> *languages) {
+		_background::addLanguages(languages, 2);
+	}
 };
 
-class HauntedOne : public _background{
-  public:
-    void addSkills(vector<string> *skills){
-      string s[] = {"Arcana", "Investigation", "Religion", "Survival"};
-      string skip = "";
-      for(int i = 0; i < 2; i++){
-        bool c = false;
-        do{
-          cout << "["
-          for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++)
-            if(boost::iequals(s[j], skip)){
-              cout << s[j];
-              if(j != (sizeof(s)/sizeof(*s) - 1)
-                cout << ", ";
-            }
-          cout << "]: "
-          string skill;
-          cin >> skill;
-          for(int j = 0; j < (sizeof(s)/sizeof(*s)); j++)
-            if(boost::iequals(s[j], skip))
-              if(boost::iequals(skill, s[j])){
-                skip = s[j]
-                c = true;
-              }
-        }while(!c);
-        (*skills).push_back(skill);
-      }
-    }
+class HauntedOne : public _background {
+private:
+	void addSkills(vector<string> *skills, list<string> s, int numSkills) {
+		if (numSkills <= 0)
+			return;
 
-    void addLanguages(vector<string> *languages){
-      string lang;
-      bool c = false;
-      do{
-        cout << "[";
-        for (int i = 0; i < (sizeof(exotics)/sizeof(*exotics)); i++){
-          std::cout << exotics[i];
-          if(i != 7)
-            cout << ", ";
-        }
-        cout << "]: ";
-        std::cin >> lang;
-        for(int i = 0; i < (sizeof(exotics)/sizeof(*exotics)); i++)
-          if(boost::iequals(lang, exotics[i]))
-            c = true;
-      }while(!c);
-      (*languages).push_back(lang);
-      allLangs.remove(lang);
-    }
+		outputStringList(s);
+
+		string skill;
+		cin >> skill;
+
+		if (!listContains(s, skill)) {
+			cout << "Not a valid skill!" << endl;
+			addSkills(skills, s, numSkills);
+			return;
+		}
+
+		skills->push_back(skill);
+		s.remove(skill);
+		addSkills(skills, s, --numSkills);
+	}
+
+public:
+	void addSkills(vector<string> *skills) {
+		list<string> s = {"Arcana", "Investigation", "Religion", "Survival"};
+
+		addSkills(skills, s, 2);
+	}
+
+	void addLanguages(vector<string> *languages) {
+		_background::addLanguages(languages, 1);
+	}
 };
 
-class Noble : public _background{
-  public:
-    void addSkills(vector<string> *skills){
-      (*skills).push_back("Persuasion");
-      (*skills).push_back("History");
-    }
+class Noble : public _background {
+public:
+	void addSkills(vector<string> *skills) {
+		skills->push_back("Persuasion");
+		skills->push_back("History");
+	}
 
-    void addLanguages(vector<string> *languages){
-      string lang;
-      bool c = false;
-      do{
-        cout << "[";
-        for (auto it = allLangs.cbegin(); it != allLangs.cend(); ++it){
-          std::cout << *it;
-          if(*it != allLangs.back())
-            cout << ", ";
-        }
-        cout << "]: ";
-        std::cin >> lang;
-        for(std::list<string>::iterator it = allLangs.begin(); it != allLangs.end(); it++)
-          if(boost::iequals(lang, *it))
-            c = true;
-      }while(!c);
-      (*languages).push_back(lang);
-      allLangs.remove(lang);
-    }
+	void addLanguages(vector<string> *languages) {
+		_background::addLanguages(languages, 1);
+	}
 };
 
-class Criminal : public _background{
-  public:
-    void addSkills(vector<string> *skills){
-      (*skills).push_back("Deception");
-      (*skills).push_back("Stealth");
-    }
+class Criminal : public _background {
+public:
+	void addSkills(vector<string> *skills) {
+		skills->push_back("Deception");
+		skills->push_back("Stealth");
+	}
 };
 
-class FolkHero : public _background{
-  public:
-    void addSkills(vector<string> *skills){
-      (*skills).push_back("Animal Handling");
-      (*skills).push_back("Survival");
-    }
+class FolkHero : public _background {
+public:
+	void addSkills(vector<string> *skills) {
+		skills->push_back("Animal Handling");
+		skills->push_back("Survival");
+	}
 };
 
-class Soldier : public _background{
-  public:
-    void addSkills(vector<string> *skills){
-      (*skills).push_back("Athletics");
-      (*skills).push_back("Intimidation");
-    }
+class Soldier : public _background {
+public:
+	void addSkills(vector<string> *skills) {
+		skills->push_back("Athletics");
+		skills->push_back("Intimidation");
+	}
 };
 
 #endif
